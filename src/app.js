@@ -19,9 +19,50 @@ app.use("/test", (req, res) => {
     res.send("Hello from express js");
 });
 
-// * GET method
+// * GET method, this will match /testget, /testget/abc, /testget/1
 app.get("/testget", (req, res) => {
     res.send({name: "John", age: 30});
+});
+
+// * Express 4 supports the ? route pattern. This matches /ac and /abc because b is optional.
+// * Express 5 does not support ? for optional route parts. Use braces instead: /a{b}c.
+// * Braces make the text inside them optional, so /a{b}c also matches /ac and /abc.
+// * For an optional named parameter in Express 5, use braces around the parameter: /user{/:id}.
+app.get("/ab?c", (req, res) => {
+    res.send("Hello from express js optional get method using ?");
+});
+
+// * will work for abc, abbbc, abbc
+app.get("/ab+c", (req, res) => {
+    res.send("Hello from express js optional get method using +");
+});
+
+//* regex expression, will work for ac, abc, abbc, abbbc, abbbbc
+// * abcd, abAnyThingcd, ab123cd, abxyzcd, etc. will also work
+app.get("/ab*cd", (req, res) => {
+    res.send("Hello from express js optional get method using *");
+});
+
+// * Group optional will work for ad, abcd, abcd, abcd, etc. but not for abcd, abcd, abcd, etc.
+app.get("/a(bc)?d", (req, res) => {
+    res.send("Hello from express js optional get method using ?");
+});
+
+//* regex for any string with a will work for a, ab, ac, abc, abcd, abcd, etc. but not for bcd, cde, def, etc.
+app.get("/a/", (req, res) => {
+    res.send("Hello from express js optional get method using regex");
+});
+
+// * Access query params using req.query object. For example, if the request is /user?name=John&age=30, then req.query will be { name: 'John', age: '30' }.
+app.get("/user", (req, res) => {
+    console.log(req.query); // to access query params
+    res.send("Hello from express js optional get method using regex");
+});
+
+// * Dynaimic url , /user/123, /user/abc, /user/xyz, etc. will work. We can access the userID using req.params.userID
+app.get("/user/:userID", (req, res) => {
+    console.log(req.params); // to access path params
+    res.send("Hello from express js optional get method using regex");
 });
 
 //* POST method
